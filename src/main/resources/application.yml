@@ -11,7 +11,7 @@ spring:
     password: '1111'
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     generate-ddl: true
     properties:
       format_sql: true

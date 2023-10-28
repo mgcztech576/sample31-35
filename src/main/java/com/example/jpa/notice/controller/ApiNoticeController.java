@@ -32,35 +32,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 public class ApiNoticeController {
-
     private final NoticeRepository noticeRepository;
-
-
-    /*
-    @GetMapping("/api/notice")
+    /*@GetMapping("/api/notice")
     public String noticeString(){
-        return "공지사항입니다.";
-    }
-    */
-
-    /*
-    @GetMapping("/api/notice")
+        return "공지사항입니다.";}*/
+/*@GetMapping("/api/notice")
     public NoticeModel notice() {
-
         LocalDateTime regDate = LocalDateTime.of(2021, 2, 8, 0, 0);
-
         NoticeModel notice = new NoticeModel();
         notice.setId(1);
         notice.setTitle("공지사항입니다.");
         notice.setContents("공지사항 내용입니다.");
-        notice.setRegDate(regDate);
-
-        return notice;
-    }
-    */
-
-    /*
-    @GetMapping("/api/notice")
+        notice.setRegDate(regDate);return notice;}*/
+    /*@GetMapping("/api/notice")
     public List<NoticeModel> notice() {
 
         List<NoticeModel> noticeList = new ArrayList<>();
@@ -344,50 +328,27 @@ public class ApiNoticeController {
      */
     @DeleteMapping("/api/notice/all")
     public void deleteAll() {
-
-        noticeRepository.deleteAll();
-
-    }
-
-
-    /**
-     26. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만들어 보세요.
-     [조건]
-     METHOD : POST
+        noticeRepository.deleteAll();}
+    /**26. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만들어 보세요.
+     [조건]METHOD : POST
      DTO를 통한 파라미터를 형태로 받음
      등록일은 현재일시, 조회수, 좋아요수는 0으로 설정
-     전달받은 파라미터를 통해서 데이터베이스에 저장함.
-     */
-    /*
-    @PostMapping("/api/notice")
+     전달받은 파라미터를 통해서 데이터베이스에 저장함.*/
+    /*@PostMapping("/api/notice")
     public void addNotice(@RequestBody NoticeInput noticeInput) {
-
         Notice notice = Notice.builder()
                 .title(noticeInput.getTitle())
                 .contents(noticeInput.getContents())
-                .hits(0)
-                .likes(0)
-                .regDate(LocalDateTime.now())
-                .build();
-
-        noticeRepository.save(notice);
-    }
-    */
-
-
-    /**
-     27. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만드어 보세요.
-     [조건]
-     입력값은 입력DTO를 통해서 입력받음
+                .hits(0).likes(0)
+                .regDate(LocalDateTime.now()).build();
+        noticeRepository.save(notice);}*/
+    /** 27. 글을 작성할때 제목과 내용을 받아서 저장하는 API를 만드어 보세요.
+     [조건] 입력값은 입력DTO를 통해서 입력받음
      제목과 내용은 필수 입력 조건임(입력되지 않은 경우 400 리턴)
-     예외발생시 각각의 에러를 취합하여 콜렉션형태로 리턴"
-     */
-
-    /*
-    @PostMapping("/api/notice")
+     예외발생시 각각의 에러를 취합하여 콜렉션형태로 리턴"*/
+    /*@PostMapping("/api/notice")
     public ResponseEntity<Object> addNotice(@RequestBody @Valid NoticeInput noticeInput
             , Errors errors) {
-
         if (errors.hasErrors()) {
             List<ResponseError> responseErrors = new ArrayList<>();
 
@@ -442,39 +403,22 @@ public class ApiNoticeController {
                 .likes(0)
                 .regDate(LocalDateTime.now())
                 .build());
-
-        return ResponseEntity.ok().build();
-    }
-    */
-
-    /**
-     29. 데이터베이스에서 공지사항 목록중에서 파라미터로 전달된 개수만큼 리턴하는 API를 만들어 보세요.
-     ex)최근5개
-     */
+        return ResponseEntity.ok().build();}*/
+    /** 29. 데이터베이스에서 공지사항 목록중에서 파라미터로 전달된 개수만큼 리턴하는 API를 만들어 보세요.ex)최근5개*/
     @GetMapping("/api/notice/latest/{size}")
     public Page<Notice> noticeLatest(@PathVariable int size) {
-
         Page<Notice> noticeList
                 = noticeRepository.findAll(
                 PageRequest.of(0, size, Sort.Direction.DESC, "regDate"));
-
-        return noticeList;
-    }
-
+        return noticeList;}
     @ExceptionHandler(DuplicateNoticeException.class)
     public ResponseEntity<?> handlerDuplicateNoticeException(DuplicateNoticeException exception) {
-
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     30. 공지사항의 내용을 등록한 이후에 바로 동일한 제목과 내용의 공지사항을 등록하는 경우 등록을 막는 API를 만들어 보세요.
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);}
+    /** 30. 공지사항의 내용을 등록한 이후에 바로 동일한 제목과 내용의 공지사항을 등록하는 경우 등록을 막는 API를 만들어 보세요.
      중복 경우(조건: 동일제목, 동일내용과 등록일이 현재시간 기준 1분이내의 경우는 중복으로 판단함)
-     예외발생(DuplicateNoticeException)
-     */
+     예외발생(DuplicateNoticeException)*/
     @PostMapping("/api/notice")
     public void addNotice(@RequestBody NoticeInput noticeInput) {
-
         //중복체크
         LocalDateTime checkDate = LocalDateTime.now().minusMinutes(1);
         int noticeCount = noticeRepository.countByTitleAndContentsAndRegDateIsGreaterThanEqual(
@@ -482,36 +426,11 @@ public class ApiNoticeController {
                 , noticeInput.getContents()
                 , checkDate);
         if (noticeCount > 0) {
-            throw new DuplicateNoticeException("1분이내에 등록된 동일한 공지사항이 존재합니다.");
-        }
-
+            throw new DuplicateNoticeException("1분이내에 등록된 동일한 공지사항이 존재합니다.");}
         noticeRepository.save(Notice.builder()
                 .title(noticeInput.getTitle())
                 .contents(noticeInput.getContents())
                 .hits(0)
                 .likes(0)
                 .regDate(LocalDateTime.now())
-                .build());
-    }
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                .build());}}
