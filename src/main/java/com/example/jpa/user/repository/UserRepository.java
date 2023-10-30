@@ -7,4 +7,6 @@ import java.util.Optional;
     //Optional<User> findByEmail(String email);오류
     int countByEmail(String email);//36
     Optional<User> findByIdAndPassword(long id, String password);
+    Optional<User> findByUserNameAndPhone(String userName, String phone);//40
+    Optional<User> findByEmail(String email);//43
 }

@@ -1,28 +1,21 @@
 package com.example.jpa.notice.controller;
 
 import com.example.jpa.notice.entity.Notice;
-import com.example.jpa.notice.execption.AlreadyDeletedException;
-import com.example.jpa.notice.execption.DuplicateNoticeException;
-import com.example.jpa.notice.execption.NoticeNotFundException;
+import com.example.jpa.notice.exception.AlreadyDeletedException;
+import com.example.jpa.notice.exception.DuplicateNoticeException;
+import com.example.jpa.notice.exception.NoticeNotFoundException;
 import com.example.jpa.notice.model.NoticeDeleteInput;
 import com.example.jpa.notice.model.NoticeInput;
 import com.example.jpa.notice.model.NoticeModel;
-import com.example.jpa.notice.model.ResponseError;
 import com.example.jpa.notice.repository.NoticeRepository;
-import jdk.vm.ci.meta.Local;
 import lombok.RequiredArgsConstructor;
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,8 +170,8 @@ public class ApiNoticeController {
     }
     */
 
-    @ExceptionHandler(NoticeNotFundException.class)
-    public ResponseEntity<String> handlerNoticeNotFundException(NoticeNotFundException exception) {
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<String> handlerNoticeNotFundException(NoticeNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -208,7 +201,7 @@ public class ApiNoticeController {
     public void updateNotice(@PathVariable Long id, @RequestBody NoticeInput noticeInput) {
 
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(() -> new NoticeNotFundException("공지사항의 글이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
 
         notice.setTitle(noticeInput.getTitle());
         notice.setContents(noticeInput.getContents());
@@ -221,7 +214,7 @@ public class ApiNoticeController {
     public void noticeHits(@PathVariable Long id) {
 
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(() -> new NoticeNotFundException("공지사항의 글이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
 
         notice.setHits(notice.getHits() + 1);
 
@@ -284,7 +277,7 @@ public class ApiNoticeController {
     public void deleteNotice(@PathVariable Long id) {
 
         Notice notice = noticeRepository.findById(id)
-                .orElseThrow(() -> new NoticeNotFundException("공지사항의 글이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
 
         if (notice.isDeleted()) {
             throw new AlreadyDeletedException("이미 삭제된 글입니다.");
@@ -309,7 +302,7 @@ public class ApiNoticeController {
     public void deleteNoticeList(@RequestBody NoticeDeleteInput noticeDeleteInput) {
 
         List<Notice> noticeList = noticeRepository.findByIdIn(noticeDeleteInput.getIdList())
-                .orElseThrow(() -> new NoticeNotFundException("공지사항의 글이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
 
         noticeList.stream().forEach(e -> {
             e.setDeleted(true);

@@ -8,7 +8,7 @@ spring:
     #url: jdbc:h2:file:/Users/parkkyutae/Documents/sources/github/fastcampus-demo-01/record-example/sample1/backofficeDb
     driver-class-name: org.h2.Driver
     username: root
-    password: '1111'
+    password:
   jpa:
     hibernate:
       ddl-auto: none

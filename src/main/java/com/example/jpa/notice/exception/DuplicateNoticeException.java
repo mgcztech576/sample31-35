@@ -1,4 +1,4 @@
-package com.example.jpa.notice.execption;
+package com.example.jpa.notice.exception;
 
 public class DuplicateNoticeException extends RuntimeException {
     public DuplicateNoticeException(String message) {
